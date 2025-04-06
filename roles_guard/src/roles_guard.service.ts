@@ -1,13 +1,16 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Role } from './role.enum';
 import { ROLES_KEY } from './roles.decorator';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from './public.decorator';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RolesGuardService implements CanActivate {
-    constructor(private reflector: Reflector) {}
+    constructor(private reflector: Reflector,
+      private jwtService: JwtService,
+    ) {}
   
     canActivate(context: ExecutionContext): boolean {
       // Public routes
@@ -34,9 +37,18 @@ export class RolesGuardService implements CanActivate {
       const user = req.user;
       
       if (!user) {
-        return false;
+        throw new ForbiddenException('You must be logged in to access this resource');
       }
+
+      if (user.role === Role.PROFESSOR) {
+        return true;
+      }
+
+      const userId = ctx.getArgs().id;
+    if (userId!== user.id) {
+      throw new ForbiddenException('You are not allowed to modify this resource');
+    }
       
       return requiredRoles.some((role) => user.role === role);
     }
-}
+} 
