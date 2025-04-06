@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '@guards/roles_guard/public.decorator';
+import { log } from 'console';
 
 @Injectable()
 export class AuthGuardService implements CanActivate {
@@ -49,8 +50,10 @@ export class AuthGuardService implements CanActivate {
       try {
         const tokenParts = token.split(' ');
         const jwtToken = tokenParts.length > 1 ? tokenParts[1] : token;
-        
+        log("jwtToken: ", jwtToken);
         const decoded = this.jwtService.verify(jwtToken, { secret: process.env.JWT_SECRET });
+        log("decoded: ", decoded);
+        log("----------------------------------");
         const role = decoded['role'];
         request.user = { ...decoded, role };
   

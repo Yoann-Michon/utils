@@ -4,6 +4,7 @@ import { ROLES_KEY } from './roles.decorator';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from './public.decorator';
+import { log } from 'console';
 
 @Injectable()
 export class RolesGuardService implements CanActivate {
@@ -33,6 +34,7 @@ export class RolesGuardService implements CanActivate {
       const ctx = GqlExecutionContext.create(context);
       const { req } = ctx.getContext();
       const user = req.user;
+      log("user: ", req.user);
       
       if (!user) {
         throw new ForbiddenException('You must be logged in to access this resource');
