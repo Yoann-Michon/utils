@@ -4,12 +4,10 @@ import { ROLES_KEY } from './roles.decorator';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from './public.decorator';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RolesGuardService implements CanActivate {
     constructor(private reflector: Reflector,
-      private jwtService: JwtService,
     ) {}
   
     canActivate(context: ExecutionContext): boolean {
